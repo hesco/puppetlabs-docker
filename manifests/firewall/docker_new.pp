@@ -46,6 +46,11 @@ class docker::firewall::docker_new {
   } else {
     # include docker::firewall::docker
 
+    file { '/var/run/netns':
+      ensure => 'link',
+      target => '/var/run/docker/netns',
+    }
+
     # The namevar here is in the format chain_name:table:protocol
     firewallchain { 'DOCKER:filter:IPv4':
       ensure  => present,
