@@ -115,7 +115,7 @@ class docker::firewall::docker_filter {
 
     # -A FORWARD -o docker_gwbridge -j DOCKER
     firewall { '00106 forward docker_gwbridge traffic to DOCKER chain':
-      action   => 'DOCKER',
+      jump     => 'DOCKER',
       proto    => 'all',
       chain    => 'FORWARD',
       outiface => 'docker_gwbridge',
@@ -131,7 +131,7 @@ class docker::firewall::docker_filter {
     }
 
     # -A FORWARD -i docker_gwbridge -o docker_gwbridge -j DROP
-    firewall { '00106 accept docker_gwbridge traffic related to established connections':
+    firewall { '00106 drop traffic from and to the docker_gwbridge network':
       action   => 'drop',
       proto    => 'all',
       chain    => 'FORWARD',
@@ -141,7 +141,7 @@ class docker::firewall::docker_filter {
 
     # -A DOCKER-ISOLATION-STAGE-1 -i docker_gwbridge ! -o docker_gwbridge -j DOCKER-ISOLATION-STAGE-2
     firewall { '00106 route DOCKER-ISOLATION-STAGE-1 traffic to DOCKER-ISOLATION-STAGE-2':
-      action   => 'DOCKER-ISOLATION-STAGE-2',
+      jump     => 'DOCKER-ISOLATION-STAGE-2',
       proto    => 'all',
       chain    => 'DOCKER-ISOLATION-STAGE-1',
       outiface => '! docker_gwbridge',
@@ -174,14 +174,12 @@ class docker::firewall::docker_filter {
     # -A DOCKER-ISOLATION-STAGE-2 -j RETURN
     firewall { '60114 DOCKER-ISOLATION-STAGE-2 traffic now RETURNed':
       chain => 'DOCKER-ISOLATION-STAGE-2',
-      proto => 'all',
       jump  => 'RETURN',
     }
 
     # -A DOCKER-USER -j RETURN
     firewall { '60115 DOCKER-USER traffic now RETURNed':
       chain => 'DOCKER-USER',
-      proto => 'all',
       jump  => 'RETURN',
     }
 

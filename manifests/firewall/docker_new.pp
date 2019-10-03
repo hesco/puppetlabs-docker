@@ -96,6 +96,7 @@ class docker::firewall::docker_new {
     notify { 'docker::firewall::docker--check-for--network_docker0': message => "${::network_docker0}/16" }
   } else {
     # include docker::firewall::docker
+    include stdlib
     include docker::firewall::docker_nat
     include docker::firewall::docker_filter
     ### include docker::firewall::docker_mangle is empty
